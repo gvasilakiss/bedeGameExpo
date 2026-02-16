@@ -14,6 +14,7 @@ import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 type Game = {
   id: string;
   title: string;
+  description?: string;
   url: string;
 };
 
@@ -22,17 +23,26 @@ const GAMES: Game[] = [
   {
     id: "marble-shooter",
     title: "Marble Shooter",
+    description: "A fun and addictive marble shooting game",
     url: "https://www.htmlgames.com/game/Marble+Shooter/",
   },
   {
     id: "higher-or-lower",
     title: "Higher or Lower",
+    description: "Guess if the next card is higher or lower",
     url: "https://www.htmlgames.com/game/Higher+or+Lower/",
   },
   {
     id: "bubble-shooter",
     title: "Bubble Shooter",
+    description: "Pop bubbles to clear the screen",
     url: "https://www.htmlgames.com/game/Bubble+Shooter/",
+  },
+  {
+    id: "chess",
+    title: "Chess",
+    description: "Classic chess game",
+    url: "https://www.htmlgames.com/game/Chess/",
   },
 ];
 
@@ -46,8 +56,12 @@ export default function App() {
         style={styles.gameItem}
         onPress={() => setSelectedGame(item)}
         accessibilityLabel={`Play ${item.title}`}
+        accessibilityRole="button"
       >
         <Text style={styles.gameTitle}>{item.title}</Text>
+        {item.description && (
+          <Text style={styles.gameDescription}>{item.description}</Text>
+        )}
       </TouchableOpacity>
     );
   };
@@ -58,6 +72,7 @@ export default function App() {
         <StatusBar />
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Bede Expo Games</Text>
+          <Text style={styles.headerSubtitle}>{GAMES.length} games</Text>
         </View>
 
         <FlatList
@@ -66,6 +81,7 @@ export default function App() {
           renderItem={renderGameItem}
           contentContainerStyle={styles.listContent}
         />
+
         {selectedGame && (
           <View style={styles.webviewContainer}>
             {isLoading && (
@@ -74,6 +90,7 @@ export default function App() {
                 <Text style={styles.loadingText}>Loading game...</Text>
               </View>
             )}
+
             <WebView
               source={{ uri: selectedGame.url }}
               style={styles.webview}
@@ -95,7 +112,7 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
-// some clean styling and x button
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -106,11 +123,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 4,
   },
   listContent: {
     padding: 16,
@@ -125,6 +148,11 @@ const styles = StyleSheet.create({
   },
   gameTitle: {
     fontSize: 18,
+  },
+  gameDescription: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
   },
   webviewContainer: {
     position: "absolute",
@@ -143,7 +171,7 @@ const styles = StyleSheet.create({
     right: 12,
     width: 40,
     height: 40,
-    backgroundColor: "#333",
+    backgroundColor: "#d9534f",
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",

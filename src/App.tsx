@@ -49,6 +49,7 @@ const GAMES: Game[] = [
 export default function App() {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [route, setRoute] = useState<"home" | "about">("home");
 
   const renderGameItem = ({ item }: { item: Game }) => {
     return (
@@ -73,14 +74,68 @@ export default function App() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Bede Expo Games</Text>
           <Text style={styles.headerSubtitle}>{GAMES.length} games</Text>
+
+          <View style={styles.navContainer}>
+            <TouchableOpacity
+              onPress={() => setRoute("home")}
+              style={[
+                styles.navButton,
+                route === "home" && styles.navButtonActive,
+              ]}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: route === "home" }}
+            >
+              <Text
+                style={[
+                  styles.navButtonText,
+                  route === "home" && styles.navButtonTextActive,
+                ]}
+              >
+                Games
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setRoute("about")}
+              style={[
+                styles.navButton,
+                route === "about" && styles.navButtonActive,
+              ]}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: route === "about" }}
+            >
+              <Text
+                style={[
+                  styles.navButtonText,
+                  route === "about" && styles.navButtonTextActive,
+                ]}
+              >
+                About
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <FlatList
-          data={GAMES}
-          keyExtractor={(item) => item.id}
-          renderItem={renderGameItem}
-          contentContainerStyle={styles.listContent}
-        />
+        {route === "home" && (
+          <FlatList
+            data={GAMES}
+            keyExtractor={(item) => item.id}
+            renderItem={renderGameItem}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
+
+        {route === "about" && (
+          <View style={styles.aboutContainer}>
+            <Text style={styles.aboutTitle}>About this demo</Text>
+            <Text style={styles.aboutText}>
+              This is a simple React Native app built with Expo to showcase how
+              to load web games in a WebView. It features a list of games
+              fetched from a hard-coded array, and when you select a game, it
+              opens in a full-screen WebView.
+            </Text>
+          </View>
+        )}
 
         {selectedGame && (
           <View style={styles.webviewContainer}>
@@ -134,6 +189,39 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginTop: 4,
+  },
+  navContainer: {
+    flexDirection: "row",
+    marginTop: 8,
+  },
+  navButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    backgroundColor: "transparent",
+    marginHorizontal: 6,
+  },
+  navButtonActive: {
+    backgroundColor: "#333",
+  },
+  navButtonText: {
+    color: "#333",
+    fontSize: 14,
+  },
+  navButtonTextActive: {
+    color: "#fff",
+  },
+  aboutContainer: {
+    padding: 20,
+  },
+  aboutTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  aboutText: {
+    fontSize: 14,
+    color: "#444",
   },
   listContent: {
     padding: 16,

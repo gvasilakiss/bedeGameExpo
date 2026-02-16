@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -37,12 +38,14 @@ const GAMES: Game[] = [
 
 export default function App() {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const renderGameItem = ({ item }: { item: Game }) => {
     return (
       <TouchableOpacity
         style={styles.gameItem}
         onPress={() => setSelectedGame(item)}
+        accessibilityLabel={`Play ${item.title}`}
       >
         <Text style={styles.gameTitle}>{item.title}</Text>
       </TouchableOpacity>
@@ -65,15 +68,24 @@ export default function App() {
         />
         {selectedGame && (
           <View style={styles.webviewContainer}>
+            {isLoading && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#333" />
+                <Text style={styles.loadingText}>Loading game...</Text>
+              </View>
+            )}
             <WebView
               source={{ uri: selectedGame.url }}
               style={styles.webview}
+              onLoadStart={() => setIsLoading(true)}
+              onLoadEnd={() => setIsLoading(false)}
             />
 
             <TouchableOpacity
               onPress={() => setSelectedGame(null)}
               style={styles.floatingCloseButton}
               activeOpacity={0.7}
+              accessibilityLabel="Close game"
             >
               <Text style={styles.floatingCloseText}>✕</Text>
             </TouchableOpacity>
@@ -141,5 +153,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#fff",
     fontWeight: "bold",
+  },
+  loadingContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#333",
   },
 });
